@@ -55,6 +55,7 @@ class UserHandler extends DefaultHandler {
     boolean bSpells = false;
     boolean bSlots = false;
     boolean bVulnerable = false;
+    boolean bReaction = false;
     boolean isInnate = false;
     boolean isSpellCasting = false;
     boolean isAttack = false;
@@ -188,10 +189,14 @@ class UserHandler extends DefaultHandler {
             case "conditionImmune":
                 bConditionImmune = true;
                 break;
+            case "reaction":
+                bReaction = true;
+                break;
             case "resist":
                 bConditionImmune = true;
                 break;
             }
+
         }
 
     @Override
@@ -311,6 +316,10 @@ class UserHandler extends DefaultHandler {
                 mb.saves(sb.BuildStat());
                 bSave = false;
                 break;
+            case "reaction":
+                ib.reaction(ab.BuildAction());
+                bReaction = false;
+                break;
         }
     }
 
@@ -319,6 +328,9 @@ class UserHandler extends DefaultHandler {
 
         String s = new String(ch, start, length);
         //YDERSTE TAG SKAL LIGGE LÆNGST NEDE I ELSE-IF RÆKKEN, OSV.
+
+
+
         if (bName) {
             if(bTrait){
                 if(s.equals("Innate Spellcasting")){
@@ -332,7 +344,7 @@ class UserHandler extends DefaultHandler {
             else if(bLegendary){
                 lab.name(s);
             }
-            else if(bAction){
+            else if(bAction || bReaction){
                 ab.name(s);
             }
             else{
@@ -354,9 +366,10 @@ class UserHandler extends DefaultHandler {
             else if(bLegendary){
                 lab.text(s);
             }
-            else if(bAction){
+            else if(bAction || bReaction){
                 ab.text(s);
             }
+
             System.out.println("Text: " + new String(ch, start, length));
             bText = false;
         }
@@ -369,59 +382,109 @@ class UserHandler extends DefaultHandler {
             bAttack = false;
         }
         else if (bSave) {
-            System.out.println("Saves: " + new String(ch, start, length));
-            bSave = false;
+            //GØR NOGET
         }
         else if(bSkill){
-
+            sb.ProcessSkillString(s, sb);
         }
         else if(bSpeed){
-
+            sb.ProcessSpeedString(s, sb);
         }
         else if(bHp){
-
+            hb.ProcessHPString(s);
         }
         else if(bAc){
-
+            String[] word = s.split(" ");
+            sb.value(Integer.parseInt(word[0]));
+            if(word.length > 1) {
+                sb.name(word[1]);
+            }
+            ib.ac(sb.BuildStat());
         }
         else if(bStr){
-
+            ib.str(Integer.parseInt(s));
         }
         else if(bDex){
-
+            ib.dex(Integer.parseInt(s));
         }
         else if(bCon){
-
+            ib.con(Integer.parseInt(s));
         }
         else if(bInt){
-
+            ib.intel(Integer.parseInt(s));
         }
         else if(bWis){
-
+            ib.wis(Integer.parseInt(s));
         }
         else if(bCha){
-
+            ib.cha(Integer.parseInt(s));
         }
         else if(bSize){
-
+            ib.size(s);
         }
         else if(bAlignment){
-
+            ib.alignment(s);
         }
-        else if(bStr){
-
+        else if(bCr){
+            if(s.contains("/")){
+                String[] word = s.split("/");
+                int divisor = Integer.parseInt(word[0]);
+                int divider = Integer.parseInt(word[1]);
+                ib.cr(divisor/divider);
+            }
+            else ib.cr(Double.parseDouble(s));
         }
         else if(bImmune){
-
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                mb.immunities(word[i]);
+            }
         }
         else if(bSlots){
-
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                mb.spellSlots(Integer.parseInt(word[i]));
+            }
         }
-        else if(bSpells){
-
+        else if(bPassive){
+            ib.passivePerception(Integer.parseInt(s));
+        }
+        else if(bLanguage){
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                mb.immunities(word[i]);
+            }
+        }
+        else if(bSenses){
+            String[] word = s.split(" ");
+            for(int i = 0; i<word.length; i++){
+                if(s.matches("([A-Z])\\w+")){
+                    if(!s.contains("ft")) {
+                        sb.name(word[i]);
+                    }
+                }
+                else sb.value(Integer.parseInt(word[i]));
+                mb.senses(sb.BuildStat());
+            }
+        }
+        else if(bConditionImmune){
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                mb.conditionImmunities((word[i]));
+            }
         }
 
-
-
+        else if(bType){
+            ib.type(s);
+        }
+        else if(bVulnerable){
+            mb.vulnerable(s);
+        }
+        else if(bResist){
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                mb.conditionImmunities((word[i]));
+            }
+        }
     }
 }

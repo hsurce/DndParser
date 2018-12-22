@@ -75,6 +75,7 @@ public class Monster {
             nestedSpellSlots = new ArrayList<>();
             nestedVulnerable = new ArrayList<>();
         }
+
         public void info(final Information newInfo){
             this.nestedInfo = newInfo;
         }

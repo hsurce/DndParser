@@ -18,5 +18,8 @@ public class HitDie {
             HitDie hitDie = new HitDie(nestedDieAmount,nestedDieSize);
             return hitDie;
         }
+        public void ProcessHPString(String s){
+
+        }
     }
 }

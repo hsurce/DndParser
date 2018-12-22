@@ -10,15 +10,15 @@ public class Information {
     int intel;
     int wis;
     int cha;
-    int cr;
+    double cr;
     int passivePerception;
     HitDie hitDie;
     Stat ac;
-    Stat reaction;
+    Action reaction;
     String innateAbility;
     String spellCastingAbility;
     public Information(String name, String size, String type, String alignment, Stat ac, int hp, HitDie hitDie,
-                       int str, int dex, int con, int intel, int wis, int cha, int cr, int passivePerception, Stat reaction, String innateAbility, String spellCastingAbility){
+                       int str, int dex, int con, int intel, int wis, int cha, double cr, int passivePerception, Action reaction, String innateAbility, String spellCastingAbility){
         this.name = name;
         this.size = size;
         this.type = type;
@@ -53,11 +53,11 @@ public static class InformationBuilder {
     private int nestedIntel;
     private int nestedWis;
     private int nestedCha;
-    private int nestedCr;
+    private double nestedCr;
     private int nestedPassivePerception;
     private HitDie nestedHitDie;
     private Stat nestedAc;
-    private Stat nestedReaction;
+    private Action nestedReaction;
 
     public void name(final String newName){
         this.nestedName = newName;
@@ -108,7 +108,7 @@ public static class InformationBuilder {
         this.nestedCha = newCha;
     }
 
-    public void cr(final int newCr){
+    public void cr(final double newCr){
         this.nestedCr = newCr;
     }
 
@@ -124,7 +124,7 @@ public static class InformationBuilder {
         this.nestedAc = newAc;
     }
 
-    private void reaction(final Stat newReaction) { this.nestedReaction = newReaction;
+    public void reaction(final Action newReaction) { this.nestedReaction = newReaction;
     }
     public Information createInformation(){
         Information information = new Information(nestedName,nestedSize,nestedType,nestedAlignment,nestedAc,nestedHp,
