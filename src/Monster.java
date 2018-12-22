@@ -80,20 +80,20 @@ public class Monster {
             this.nestedInfo = newInfo;
         }
 
-        public void skills(Stat newSkills){
-            this.nestedSkills.add(newSkills);
-        }
-
         public void speeds(Stat newSpeeds){
             this.nestedSpeeds.add(newSpeeds);
         }
 
-        public void saves(Stat newSaves){
-            this.nestedSaves.add(newSaves);
+        public void skills(ArrayList<Stat> newSkills){
+            this.nestedSkills = newSkills;
         }
 
-        public void senses(Stat newSenses){
-            this.nestedSenses.add(newSenses);
+        public void saves(ArrayList<Stat> newSaves){
+            this.nestedSaves = newSaves;
+        }
+
+        public void senses(ArrayList<Stat> newSenses){
+            this.nestedSenses = newSenses;
         }
 
         public void traits(Trait newTraits){
@@ -112,28 +112,38 @@ public class Monster {
             this.nestedAttackActions.add(newAttackActions);
         }
 
-        public void languages(String newLanguages){
-            this.nestedLanguages.add(newLanguages);
+        public ArrayList<String> ProcessMonsterString(String s, MonsterBuilder mb){
+            ArrayList<String> al = new ArrayList<>();
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                al.add(word[i]);
+            }
+            return al;
         }
 
-        public void vulnerable(String newVulnerable){this.nestedVulnerable.add(newVulnerable);}
-
-        public void resists(String newResists){
-            this.nestedResists.add(newResists);
+        public void languages(ArrayList<String> newLanguages){
+            this.nestedLanguages = newLanguages;
         }
 
-        public void immunities(String newImmunities){
-            this.nestedImmunities.add(newImmunities);
+        public void vulnerable(ArrayList<String> newVulnerable){this.nestedVulnerable = newVulnerable;}
+
+        public void resists(ArrayList<String> newResists){
+            this.nestedResists = newResists;
         }
 
-        public void conditionImmunities(String newConditionImmunities){
-            this.nestedConditionImmunities.add(newConditionImmunities);
+        public void immunities(ArrayList<String> newImmunities){
+            this.nestedImmunities = newImmunities;
         }
+
+        public void conditionImmunities(ArrayList<String> newConditionImmunities){
+            this.nestedConditionImmunities = newConditionImmunities;
+        }
+        public void spells(ArrayList<String> newSpells){
+            this.nestedSpells = newSpells;
+        }
+
         public void spellSlots(Integer newSlots){
             this.nestedSpellSlots.add(newSlots);
-        }
-        public void spells(String newSpells){
-            this.nestedSpells.add(newSpells);
         }
 
         public Monster createMonster(){

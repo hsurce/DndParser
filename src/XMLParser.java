@@ -173,16 +173,15 @@ class UserHandler extends DefaultHandler {
             case "passive":
                 bPassive = true;
                 break;
-            case "language":
+            case "languages":
                 bLanguage = true;
                 break;
             case "cr":
                 bCr = true;
                 break;
             case "senses":
-                bAction = true;
-                sb = new Stat.StatBuilder();
-                break;
+                bSenses = true;
+                 break;
             case "immune":
                 bImmune = true;
                 break;
@@ -193,7 +192,7 @@ class UserHandler extends DefaultHandler {
                 bReaction = true;
                 break;
             case "resist":
-                bConditionImmune = true;
+                bResist = true;
                 break;
             }
 
@@ -230,15 +229,12 @@ class UserHandler extends DefaultHandler {
                 bAlignment = false;
                 break;
             case "ac":
-                ib.ac(sb.BuildStat());
-                bAc = false;
+               bAc = false;
                 break;
             case "hp":
-                ib.hp(hb.BuildHitDie());
                 bHp = false;
                 break;
             case "speed":
-                mb.speeds(sb.BuildStat());
                 bSpeed = false;
                 break;
             case "spells":
@@ -266,13 +262,12 @@ class UserHandler extends DefaultHandler {
                 bCha = false;
                 break;
             case "skill":
-                mb.skills(sb.BuildStat());
                 bSkill = false;
                 break;
             case "passive":
                 bPassive = false;
                 break;
-            case "language":
+            case "languages":
                 bLanguage = false;
                 break;
             case "cr":
@@ -296,7 +291,6 @@ class UserHandler extends DefaultHandler {
                 bAction = false;
                 break;
             case "senses":
-                mb.senses(sb.BuildStat());
                 bSenses = false;
                 break;
             case "legendary":
@@ -313,13 +307,13 @@ class UserHandler extends DefaultHandler {
                 bResist = false;
                 break;
             case "save":
-                mb.saves(sb.BuildStat());
                 bSave = false;
                 break;
             case "reaction":
                 ib.reaction(ab.BuildAction());
                 bReaction = false;
                 break;
+
         }
     }
 
@@ -382,13 +376,13 @@ class UserHandler extends DefaultHandler {
             bAttack = false;
         }
         else if (bSave) {
-            //GØR NOGET
+            mb.saves(sb.ProcessStatString(s, sb));
         }
         else if(bSkill){
-            sb.ProcessSkillString(s, sb);
+            mb.skills(sb.ProcessStatString(s, sb));
         }
         else if(bSpeed){
-            sb.ProcessSpeedString(s, sb);
+            sb.ProcessSpeedString(s, sb, mb);
         }
         else if(bHp){
             hb.ProcessHPString(s);
@@ -429,16 +423,15 @@ class UserHandler extends DefaultHandler {
             if(s.contains("/")){
                 String[] word = s.split("/");
                 int divisor = Integer.parseInt(word[0]);
-                int divider = Integer.parseInt(word[1]);
-                ib.cr(divisor/divider);
+                double dividend = Integer.parseInt(word[1]);
+                double result = divisor/dividend;
+                ib.cr(result);
             }
             else ib.cr(Double.parseDouble(s));
         }
         else if(bImmune){
-            String[] word = s.split(",");
-            for(int i = 0; i<word.length; i++){
-                mb.immunities(word[i]);
-            }
+            mb.immunities(mb.ProcessMonsterString(s,mb));
+
         }
         else if(bSlots){
             String[] word = s.split(",");
@@ -450,41 +443,30 @@ class UserHandler extends DefaultHandler {
             ib.passivePerception(Integer.parseInt(s));
         }
         else if(bLanguage){
-            String[] word = s.split(",");
-            for(int i = 0; i<word.length; i++){
-                mb.immunities(word[i]);
-            }
+            mb.languages(mb.ProcessMonsterString(s,mb));
+
         }
         else if(bSenses){
-            String[] word = s.split(" ");
-            for(int i = 0; i<word.length; i++){
-                if(s.matches("([A-Z])\\w+")){
-                    if(!s.contains("ft")) {
-                        sb.name(word[i]);
-                    }
-                }
-                else sb.value(Integer.parseInt(word[i]));
-                mb.senses(sb.BuildStat());
-            }
+            mb.senses(sb.ProcessStatString(s,sb));
         }
         else if(bConditionImmune){
-            String[] word = s.split(",");
-            for(int i = 0; i<word.length; i++){
-                mb.conditionImmunities((word[i]));
-            }
+            mb.conditionImmunities(mb.ProcessMonsterString(s,mb));
         }
 
         else if(bType){
             ib.type(s);
         }
         else if(bVulnerable){
-            mb.vulnerable(s);
+            mb.vulnerable(mb.ProcessMonsterString(s,mb));
+
         }
         else if(bResist){
-            String[] word = s.split(",");
-            for(int i = 0; i<word.length; i++){
-                mb.conditionImmunities((word[i]));
-            }
+            mb.resists(mb.ProcessMonsterString(s,mb));
+
+        }
+        else if(bSpells){
+            mb.spells(mb.ProcessMonsterString(s,mb));
+
         }
     }
 }
