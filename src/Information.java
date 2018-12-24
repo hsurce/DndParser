@@ -1,3 +1,8 @@
+/**
+ * Grunden til denne klasses tilstedeværelse er blot at mindske kode-bloat i monster klassen.
+ * Et monster kan have op til 30 forskellige felter af information, og ved at modularisere på denne måde
+ * kan man lettere navigere i koden.
+ */
 public class Information {
     String name;
     String size;
@@ -39,7 +44,15 @@ public class Information {
         this.spellCastingAbility = spellCastingAbility;
     }
 
-public static class InformationBuilder {
+    /**
+     * Vi gør brug af et builder-pattern for at gøre arbejdet nemmest muligt.
+     * Ved at bruge denne struktur kan vi sørge for at XMLParseren ikke skal
+     * junglere med mange forskellige værdier indtil de yderste tags den behandler
+     * bliver sluttet. I stærk kontrast til det, kan man ved brug af denne struktur
+     * blot passere værdierne til builderen, hvorefter builderen tager sig af at oplagre
+     * værdierne, indtil det egentlige objekt skal dannes.
+     */
+    public static class InformationBuilder {
     private String nestedName;
     private String nestedSize;
     private String nestedType;

@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 
-
+/**
+ * Dette er den klasse, der skal samle alle informationerne på det enkelte monster.
+ */
 public class Monster {
     Information info;
     ArrayList<Stat> skills;
@@ -58,6 +60,14 @@ public class Monster {
         ArrayList<String> nestedVulnerable;
         ArrayList<Integer> nestedSpellSlots;
 
+        /**
+         * Vi gør brug af et builder-pattern for at gøre arbejdet nemmest muligt.
+         * Ved at bruge denne struktur kan vi sørge for at XMLParseren ikke skal
+         * junglere med mange forskellige værdier indtil de yderste tags den behandler
+         * bliver sluttet. I stærk kontrast til det, kan man ved brug af denne struktur
+         * blot passere værdierne til builderen, hvorefter builderen tager sig af at oplagre
+         * værdierne, indtil det egentlige objekt skal dannes.
+         */
         public MonsterBuilder(){
             nestedSkills = new ArrayList<>();
             nestedSpeeds = new ArrayList<>();
@@ -112,7 +122,15 @@ public class Monster {
             this.nestedAttackActions.add(newAttackActions);
         }
 
-        public ArrayList<String> ProcessMonsterString(String s, MonsterBuilder mb){
+        /**
+         * En metode som splitter en string på kommaer, og derefter indsætter rest-værdierne i en arraylist
+         * som senere kan videresendes til det relevante monsterobjekt. Dette er en meget generel metode
+         * der bliver brugt til at lave arraylists til forskellige formål.
+         * @param s
+
+         * @return
+         */
+        public ArrayList<String> ProcessMonsterString(String s){
             ArrayList<String> al = new ArrayList<>();
             String[] word = s.split(",");
             for(int i = 0; i<word.length; i++){

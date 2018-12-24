@@ -21,27 +21,17 @@ public class Stat {
             Stat stat = new Stat(nestedName,nestedValue);
             return stat;
         }
-        /**
-        public void ProcessSkillString(String s, StatBuilder sb, Monster.MonsterBuilder mb){
-            String[] word = s.split(",");
-            String[] word2;
-            for(int i = 0; i<word.length;i++){
-                word2 = word[i].split(" ");
-                for(int j = 0; j<word2.length;j++){
-                    if(word2[j].matches("([A-Z])\\w+")){
-                        sb.name(word2[j]);
-                    }
-                    if(word2[j].matches("([0-9+])\\w+")){
-                        sb.value(Integer.parseInt((word2[j])));
-                        mb.skills(sb.BuildStat());
-                    }
-                }
-            }
-         }
-         */
-            //Bearbejd string til at have en liste af skill names og en liste af values
-            //Lav Stats fra listen indtil der ikke er flere værdier i listen.
 
+        /**
+         * Metode for string manipulation for at få speed-navne og -værdier. Denne metode er
+         * NÆSTEN overflødig (ift. ProcessStatString) og er dermed et pragteksempel på dårlig kode.
+         * Hvis der skulle refaktoriseres er denne først på huggeblokken. Den eneste forskel på de to
+         * metoder er hvor information bliver oplagret, en boolean og et if statement. Ved at tænke sig lidt
+         * om burde de to godt kunne lægges sammen..
+         * @param s
+         * @param sb
+         * @param mb
+         */
         public void ProcessSpeedString(String s, StatBuilder sb, Monster.MonsterBuilder mb){
             String[] word = s.split(",");
             String[] word2;
@@ -64,8 +54,7 @@ public class Stat {
                 mb.speeds(sb.BuildStat());
                 hasName = false;
             }
-            //Bearbejd string til at have en liste af speed names og en liste af speed values i ft.
-            //Lav Speeds fra listen indtil der ikke er flere værdier i listen.
+
         }
         public ArrayList<Stat> ProcessStatString(String s, StatBuilder sb) {
             String[] word = s.split(",");

@@ -6,6 +6,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class XMLParser {
 
@@ -81,6 +83,15 @@ class UserHandler extends DefaultHandler {
         }
         return spellCastingAbility;
     }
+
+    /**
+     * Denne metode bliver implicit kaldt af SAX-Parseren.
+     * Vi switcher på qName som er navnet på start-tagget.
+     * Ud over at initialisere nogle builders gør metoden ikke meget andet
+     * end at initialisere nogle booleans som er essensen af dette parser setup.
+     * Ved at manipulere med disse booleans kan vi sørge for at parseren kun behandler
+     * de nødvendige informationer.
+     */
     @Override
     public void startElement(
             String uri, String localName, String qName, Attributes attributes)
@@ -197,11 +208,14 @@ class UserHandler extends DefaultHandler {
             }
 
         }
+    /**
+     * Denne metode bliver implicit kaldt af SAX-parseren så snart cursoren støder på et slut-tag (</x>).
+     * Før denne metode bliver kaldt, bliver Character metoden dog kaldt.
+     */
 
     @Override
     public void endElement(String uri,
-                           String localName, String qName) throws SAXException {
-
+ String localName, String qName) throws SAXException {
         switch (qName) {
             case "monster":
                 mb.info(ib.createInformation());
@@ -294,7 +308,7 @@ class UserHandler extends DefaultHandler {
                 bSenses = false;
                 break;
             case "legendary":
-                lab.BuildLegendaryAction();
+                mb.legendaryActions(lab.BuildLegendaryAction());
                 bLegendary = false;
                 break;
             case "immune":
@@ -316,7 +330,15 @@ class UserHandler extends DefaultHandler {
 
         }
     }
-
+/**
+ * Denne metode indeholder langt det meste af logikken som parseren behandler.
+ * Metoden sørger først for at lave et char[] med al den tekst den møder imellem
+ * start- og end-tagget. En string (s) bliver oprettet baseret på dette array for at
+ * lette læs- og skrivbarheden af koden. Dette er reelt set en switch, opstillet i if-statements.
+ * Det kunne have været mere elegant at opstille en enum-klasse og switche på den, men jeg tog den
+ * mere simple udvej. Vi sørger for at bruge "if else" statements her, da flere start-tags godt kan være
+ * i gang samtidig, og det er kun den relevante logik der skal proccesseres.
+ */
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
 
@@ -337,14 +359,20 @@ class UserHandler extends DefaultHandler {
             }
             else if(bLegendary){
                 lab.name(s);
+                Pattern pLeg = Pattern.compile("((.*)\\(Costs )([0-9])( Actions\\))");
+                Matcher mLeg = pLeg.matcher(s);
+                if(mLeg.matches()){
+                    lab.cost(Integer.parseInt(mLeg.group(3)));
+                }
+                else lab.cost(1);
             }
             else if(bAction || bReaction){
                 ab.name(s);
             }
             else{
                 ib.name(s);
+                System.out.println("Name: " + new String(ch, start, length));
             }
-            System.out.println("Name: " + new String(ch, start, length));
             bName = false;
         }
         else if (bText) {
@@ -352,8 +380,12 @@ class UserHandler extends DefaultHandler {
                 if(isSpellCasting || isInnate){
                     if(isSpellCasting) {
                         ib.spellCastingAbility(FindSpellCastingAbility(s));
+                        isSpellCasting = false;
                     }
-                    else ib.innateAbility(FindSpellCastingAbility(s));
+                    else {
+                        ib.innateAbility(FindSpellCastingAbility(s));
+                        isInnate = false;
+                    }
                 }
                 tb.text(s);
             }
@@ -363,16 +395,10 @@ class UserHandler extends DefaultHandler {
             else if(bAction || bReaction){
                 ab.text(s);
             }
-
-            System.out.println("Text: " + new String(ch, start, length));
             bText = false;
         }
         else if (bAttack) {
-            /**
-             * GØR INTET ENDNU!
-             */
-            atb.ProcessAttackActionString(s);
-            System.out.println("Attack: " + new String(ch, start, length));
+            atb.ProcessAttackActionString(s, hb);
             bAttack = false;
         }
         else if (bSave) {
@@ -385,13 +411,28 @@ class UserHandler extends DefaultHandler {
             sb.ProcessSpeedString(s, sb, mb);
         }
         else if(bHp){
-            hb.ProcessHPString(s);
+            /**
+             * Parseren tager ikke den explicite con bonus med, da denne blot er (hdAmount * conMod).
+             * Hvis denne værdi skal vises, kan det nok bedst betale sig at lave en hurtig fix i logikken der beregner den.
+             * Det skal dog huskes at den endelige hp værdi som er i information objektet på det givne monster allerede
+             * tager højde for denne værdi.
+             */
+            String[] word = s.split(" ");
+            if(word.length > 1){
+                ib.hp(hb.ProcessHDString(word[1].split("\\(")[1]));
+
+            }
+            ib.hp(Integer.parseInt(word[0]));
         }
         else if(bAc){
             String[] word = s.split(" ");
             sb.value(Integer.parseInt(word[0]));
             if(word.length > 1) {
-                sb.name(word[1]);
+                String name = "";
+                for(int i = 1; i < word.length; i++) {
+                    name += word[i];
+                }
+                sb.name(name);
             }
             ib.ac(sb.BuildStat());
         }
@@ -430,7 +471,7 @@ class UserHandler extends DefaultHandler {
             else ib.cr(Double.parseDouble(s));
         }
         else if(bImmune){
-            mb.immunities(mb.ProcessMonsterString(s,mb));
+            mb.immunities(mb.ProcessMonsterString(s));
 
         }
         else if(bSlots){
@@ -443,29 +484,29 @@ class UserHandler extends DefaultHandler {
             ib.passivePerception(Integer.parseInt(s));
         }
         else if(bLanguage){
-            mb.languages(mb.ProcessMonsterString(s,mb));
+            mb.languages(mb.ProcessMonsterString(s));
 
         }
         else if(bSenses){
             mb.senses(sb.ProcessStatString(s,sb));
         }
         else if(bConditionImmune){
-            mb.conditionImmunities(mb.ProcessMonsterString(s,mb));
+            mb.conditionImmunities(mb.ProcessMonsterString(s));
         }
 
         else if(bType){
             ib.type(s);
         }
         else if(bVulnerable){
-            mb.vulnerable(mb.ProcessMonsterString(s,mb));
+            mb.vulnerable(mb.ProcessMonsterString(s));
 
         }
         else if(bResist){
-            mb.resists(mb.ProcessMonsterString(s,mb));
+            mb.resists(mb.ProcessMonsterString(s));
 
         }
         else if(bSpells){
-            mb.spells(mb.ProcessMonsterString(s,mb));
+            mb.spells(mb.ProcessMonsterString(s));
 
         }
     }

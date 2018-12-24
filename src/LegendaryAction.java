@@ -1,14 +1,17 @@
 import java.util.ArrayList;
 
 public class LegendaryAction extends Action{
-    public LegendaryAction(String name, ArrayList<String> texts){
+    int legendaryCost;
+    public LegendaryAction(String name, ArrayList<String> texts, int legendaryCost){
         super(name, texts);
         this.name = name;
         this.texts = texts;
+        this.legendaryCost = legendaryCost;
     }
     public static class LegendaryActionBuilder{
         String nestedName;
         ArrayList<String> nestedTexts;
+        int nestedLegendaryCost;
         public LegendaryActionBuilder(){
             nestedTexts = new ArrayList<>();
         }
@@ -18,8 +21,9 @@ public class LegendaryAction extends Action{
         public void text(String nestedText){
             this.nestedTexts.add(nestedText);
         }
+        public void cost(int nestedLegendaryCost){this.nestedLegendaryCost = nestedLegendaryCost;}
         public LegendaryAction BuildLegendaryAction(){
-            LegendaryAction legendaryAction = new LegendaryAction(nestedName,nestedTexts);
+            LegendaryAction legendaryAction = new LegendaryAction(nestedName,nestedTexts,nestedLegendaryCost);
             return legendaryAction;
         }
 

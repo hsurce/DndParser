@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AttackAction{
     int toHit;
@@ -35,7 +36,32 @@ public class AttackAction{
             AttackAction attackAction = new AttackAction(nestedAction,nestedToHit,nestedHitDie,nestedDamageBonus);
             return attackAction;
         }
-        public void ProcessAttackActionString(String s){
+
+        /**
+         * Metode som finder hitDie og attack bonus samt damage bonus for det enkelte angreb.
+         * @param s
+         * @param hdb
+         */
+        public void ProcessAttackActionString(String s, HitDie.HitDieBuilder hdb){
+            String[] word = s.split("\\|");
+            if(!word[1].isBlank()){
+                toHit(Integer.parseInt(word[1]));
+            }
+            for(int i = 0; i < word.length; i++){
+                HitDie hd = hdb.ProcessHDString(word[i]);
+                if(hd != null) {
+                    this.hitDie(hd);
+                }
+                Pattern p = Pattern.compile("(.*)(\\++)([0-9]+)");
+                Matcher m = p.matcher(word[i]);
+                if(m.matches()){
+                    if(m.group(2).equals("-")) {
+                        damageBonus(Integer.parseInt(m.group(3))*-1);
+                    }
+                    else damageBonus(Integer.parseInt(m.group(3)));
+                }
+
+            }
             //Få extractet de vigtige fra strengen og sæt det ind i et AttackAction objekt.
         }
     }
