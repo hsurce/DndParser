@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LegendaryAction extends Action{
+public class LegendaryAction extends Action implements Serializable {
     int legendaryCost;
     public LegendaryAction(String name, ArrayList<String> texts, int legendaryCost){
         super(name, texts);

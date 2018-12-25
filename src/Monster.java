@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Dette er den klasse, der skal samle alle informationerne på det enkelte monster.
  */
-public class Monster {
+public class Monster implements Serializable {
     Information info;
     ArrayList<Stat> skills;
     ArrayList<Stat> speeds;
@@ -41,6 +42,9 @@ public class Monster {
         this.spells = spells;
         this.spellSlots = spellSlots;
         this.vulnerable = vulnerable;
+    }
+    public Information getInfo(){
+        return this.info;
     }
     public static class MonsterBuilder{
         Information nestedInfo;
@@ -89,6 +93,7 @@ public class Monster {
         public void info(final Information newInfo){
             this.nestedInfo = newInfo;
         }
+
 
         public void speeds(Stat newSpeeds){
             this.nestedSpeeds.add(newSpeeds);

@@ -5,7 +5,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
+import java.io.*;
+import java.sql.SQLOutput;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +71,7 @@ class UserHandler extends DefaultHandler {
     LegendaryAction.LegendaryActionBuilder lab;
     Stat.StatBuilder sb;
     Trait.TraitBuilder tb;
+    HashMap<String, Monster> monsterMap = new HashMap<>();
 
     public String FindSpellCastingAbility(String s){
         String spellCastingAbility = "";
@@ -219,7 +222,8 @@ class UserHandler extends DefaultHandler {
         switch (qName) {
             case "monster":
                 mb.info(ib.createInformation());
-                mb.createMonster();
+                Monster m = mb.createMonster();
+                monsterMap.put(m.getInfo().getName(), m);
 
             case "name":
                 bName = false;
@@ -327,7 +331,19 @@ class UserHandler extends DefaultHandler {
                 ib.reaction(ab.BuildAction());
                 bReaction = false;
                 break;
-
+            case "compendium":
+                try {
+                    FileOutputStream fos = new FileOutputStream("MonstersManual.bin");
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(monsterMap);
+                    oos.close();
+                    fos.close();
+                    System.out.println("SERIALIZATION DONE!");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
     }
 /**

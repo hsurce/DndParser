@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AttackAction{
+public class AttackAction implements Serializable {
     int toHit;
     HitDie hitDie;
     int damageBonus;

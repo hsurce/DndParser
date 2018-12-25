@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Trait {
+public class Trait implements Serializable {
     String name;
     ArrayList<String> texts;
 

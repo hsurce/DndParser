@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HitDie {
+public class HitDie implements Serializable {
     int dieAmount;
     int dieSize;
     public HitDie(int dieAmount, int dieSize){

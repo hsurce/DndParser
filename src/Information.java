@@ -1,9 +1,11 @@
+import java.io.Serializable;
+
 /**
  * Grunden til denne klasses tilstedeværelse er blot at mindske kode-bloat i monster klassen.
  * Et monster kan have op til 30 forskellige felter af information, og ved at modularisere på denne måde
  * kan man lettere navigere i koden.
  */
-public class Information {
+public class Information implements Serializable {
     String name;
     String size;
     String type;
@@ -42,6 +44,9 @@ public class Information {
         this.reaction = reaction;
         this.innateAbility = innateAbility;
         this.spellCastingAbility = spellCastingAbility;
+    }
+    public String getName(){
+        return this.name;
     }
 
     /**

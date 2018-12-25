@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Stat {
+public class Stat implements Serializable {
     String name;
     int value;
     public Stat(String name, int value){

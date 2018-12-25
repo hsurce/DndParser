@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Action {
+public class Action implements Serializable {
     String name;
     ArrayList<String> texts;
     public Action(String name, ArrayList<String> texts) {
